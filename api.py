@@ -17,7 +17,8 @@ logging.getLogger('flask_cors').level = logging.DEBUG
 
 @app.route('/githook', methods=['POST'])
 def githook():
-    data = json.loads(request.get_json())
+    os.chdir("../")
+    data = request.get_json()
     pullRepo(data)
     return jsonify({})
 
