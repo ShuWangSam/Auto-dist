@@ -15,9 +15,11 @@ app = Flask(__name__)
 CORS(app)
 logging.getLogger('flask_cors').level = logging.DEBUG
 
+ROOT = '/root/Auto-dist'
+
 @app.route('/githook', methods=['POST'])
 def githook():
-    os.chdir(os.path.dirname(os.path.realpath(__file__)))
+    os.chdir(ROOT)
     data = request.get_json()
     pullRepo(data)
     return jsonify({})
