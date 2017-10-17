@@ -1,0 +1,14 @@
+{
+    "khalilleo/Githook-Test": {
+        "localPath": "./Githook-Test",
+        "servers": [
+            {
+                "name": "test1",
+                "ip": "45.77.110.160",
+                "user": "root",
+                "password": "Uq*1R1,_QFLXB(=L",
+                "path": "proj"
+            }
+        ]
+    }
+}
