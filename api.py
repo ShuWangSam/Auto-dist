@@ -15,7 +15,7 @@ app = Flask(__name__)
 CORS(app)
 logging.getLogger('flask_cors').level = logging.DEBUG
 
-ROOT = '~/Auto-dist'
+ROOT = '/root/Auto-dist'
 
 @app.route('/githook', methods=['POST'])
 def githook():
@@ -40,7 +40,7 @@ def pullRepo(git_json):
     return
 
 def doPull(localPath, server):
-    os.chdir(ROOT + localPath)
+    os.chdir(ROOT + '/' + localPath)
     commond = "git push " + server['name'] + " master"
     print("Running " + commond)
     child = pexpect.spawn(commond)
