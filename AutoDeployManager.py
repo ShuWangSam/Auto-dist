@@ -27,22 +27,24 @@ class AutoDeployManager:
         # First pull locally
         os.chdir(ROOT + '/' + localPath)
         call(shlex.split('git pull'))
-        os.chdir(ROOT)
+        #os.chdir(ROOT)
         # Then push
         servers = mapping[repo_name]['servers']
         for i in servers:
-            self.doPull(localPath, i)
+            self.doPull(i)
         print('Successfully push to all remote')
         return
 
-    def doPull(self, localPath, server):
+    def doPull(self, server):
+        '''
         if localPath:
             os.chdir(ROOT + '/' + localPath)
+        '''
         commond = "git push " + server['name'] + " master"
         print("Running " + commond)
         child = pexpect.spawn(commond)
         child.sendline(commond)
-        child.expect('root')
+        child.expect(server['user'])
         child.sendline(server['password'])
         output = str(child.read()).replace('\\n', '')
         for o in output.split('\\r'):
@@ -66,7 +68,7 @@ class AutoDeployManager:
         path = config['path']
 
         # ignore ssh key confirm
-        #call(shlex.split('ssh-keyscan ' + ip + ' >> ~/.ssh/known_hosts'))
+        call(shlex.split('ssh-keyscan ' + ip + ' >> ~/.ssh/known_hosts'))
         POST_RECIEVE_FILE = 'http://khalil.one/ok/post-receive'
         POST_CHECKOUT_FILE = 'http://khalil.one/ok/post-checkout'
 
@@ -107,7 +109,8 @@ class AutoDeployManager:
             # if setup succ, do add remote and pull
             os.chdir(localPath)
             self.addGitRemote(new_server)
-            self.doPull(None, new_server)
+            self.doPull(new_server)
+
     # Init proj
     def initProj(self, git_url):
         user = git_url.split('/')[-2]
