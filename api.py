@@ -31,7 +31,7 @@ def pullRepo(git_json):
     # First pull locally
     os.chdir(ROOT + '/' + localPath)
     call(shlex.split('git pull'))
-
+    os.chdir(ROOT)
     # Then push
     servers = mapping[repo_name]['servers']
     for i in servers:
