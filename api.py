@@ -29,7 +29,8 @@ def pullRepo(git_json):
     repo_name = "khalilleo/Githook-Test"#git_json['repository']['name']
     localPath = mapping[repo_name]['localPath']
     # First pull locally
-    call(shlex.split('cd ' + localPath + ' && git pull'))
+    os.chdir(ROOT + localPath)
+    call(shlex.split('git pull'))
 
     # Then push
     servers = mapping[repo_name]['servers']

@@ -1,6 +1,6 @@
 {
     "khalilleo/Githook-Test": {
-        "localPath": "./Githook-Test",
+        "localPath": "Githook-Test",
         "servers": [
             {
                 "name": "test1",
