@@ -6,6 +6,7 @@ import os
 from pexpect import pxssh
 
 def doPull(localPath, server):
+    os.chdir(localPath)
     commond = "git push " + server['name'] + " master"
     print("Running " + commond)
     child = pexpect.spawn(commond)
