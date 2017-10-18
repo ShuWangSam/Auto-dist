@@ -27,9 +27,14 @@ def githook():
 def pullRepo(git_json):
     mapping = json.loads(open('./mapping.json').read())
     repo_name = "khalilleo/Githook-Test"#git_json['repository']['name']
+    localPath = mapping[repo_name]['localPath']
+    # First pull locally
+    call(shlex.split('cd ' + localPath + ' && git pull'))
+
+    # Then push
     servers = mapping[repo_name]['servers']
     for i in servers:
-        doPull(mapping[repo_name]['localPath'], i)
+        doPull(localPath, i)
     print('succ')
     return
 
