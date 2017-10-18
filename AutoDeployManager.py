@@ -5,7 +5,8 @@ import pexpect
 import os
 from pexpect import pxssh
 
-ROOT = '/root/Auto-dist'
+#ROOT = '/root/Auto-dist'
+ROOT = '/Users/khalil/Documents/Auto-dist'
 
 class AutoDeployManager:
     def __init__(self):
@@ -13,6 +14,10 @@ class AutoDeployManager:
 
     def getMappingJson(self):
         return json.loads(open('./mapping.json').read())
+
+    def runLocalCommond(self, commond):
+        print("Running: " + commond)
+        call(shlex.split(commond))
 
     def pullRepo(self, git_json):
         os.chdir(ROOT)
@@ -47,8 +52,7 @@ class AutoDeployManager:
     # Add server
     def addGitRemote(self, server):
         commond = 'git remote add ' + server['name'] + ' ' + server['user'] + '@' + server["ip"] + ":" + server['path']
-        print("Running: " + commond)
-        call(shlex.split(commond))
+        self.runLocalCommond(commond)
 
     def sendCommond(self, pxssh, commond):
         pxssh.sendline(commond)
@@ -104,3 +108,28 @@ class AutoDeployManager:
             os.chdir(localPath)
             self.addGitRemote(new_server)
             self.doPull(None, new_server)
+    # Init proj
+    def initProj(self, git_url):
+        user = git_url.split('/')[-2]
+        proj_name = git_url.split('/')[-1]
+        full_name = user + '/' + proj_name
+        if not os.path.isdir(user):
+            commond = 'mkdir ' + user
+            self.runLocalCommond(commond)
+        os.chdir(user)
+        commond = 'git clone ' + git_url
+        self.runLocalCommond(commond)
+
+        # Write to json
+        os.chdir(ROOT)
+        repos = json.loads(open('mapping.json').read().strip())
+        if full_name not in repos:
+            repos[full_name] = {}
+            repos[full_name]['localPath'] = full_name
+            repos[full_name]['servers'] = []
+        else:
+            print('Proj already exist')
+            return
+        f = open("mapping.json", 'w')
+        f.write(json.dumps(repos))
+        print("Proj init successfully")
