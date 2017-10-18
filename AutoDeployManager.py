@@ -15,6 +15,7 @@ class AutoDeployManager:
         return json.loads(open('./mapping.json').read())
 
     def pullRepo(self, git_json):
+        os.chdir(ROOT)
         mapping = self.getMappingJson()
         repo_name = git_json['repository']['name']
         localPath = mapping[repo_name]['localPath']

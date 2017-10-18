@@ -20,7 +20,6 @@ deployManager = AutoDeployManager.AutoDeployManager()
 
 @app.route('/githook', methods=['POST'])
 def githook():
-    os.chdir(ROOT)
     data = request.get_json()
     deployManager.pullRepo(data)
     return jsonify({})
