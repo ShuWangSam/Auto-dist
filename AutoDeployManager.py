@@ -5,8 +5,8 @@ import pexpect
 import os
 from pexpect import pxssh
 
-ROOT = '/root/Auto-dist'
-#ROOT = '/Users/khalil/Documents/Auto-dist'
+#ROOT = '/root/Auto-dist'
+ROOT = '/Users/khalil/Documents/Auto-dist'
 
 class AutoDeployManager:
     def __init__(self):
@@ -61,14 +61,23 @@ class AutoDeployManager:
         pxssh.prompt()
         print(pxssh.before)
 
+    def getPostReceiveContent(self, path, deploy_path):
+        text = "'#!/bin/bash \n while \nread oldrev newrev ref \ndo \ngit --work-tree=/var/www/" + deploy_path + ' --git-dir=/root/' + path + " checkout -f \ndone'"
+        return text
+
+    def getPostCheckoutContent(self, path):
+        text = 'echo "Done customization"'
+        return text
+
     def configServer(self, config ,repo_name):
         ip = config['ip']
         user = config['user']
         password = config['password']
         path = config['path']
+        deploy_path = config['deploy_path']
 
         # ignore ssh key confirm
-        call(shlex.split('ssh-keyscan ' + ip + ' >> ~/.ssh/known_hosts'))
+        # call(shlex.split('ssh-keyscan ' + ip + ' >> ~/.ssh/known_hosts'))
         POST_RECIEVE_FILE = 'http://khalil.one/ok/post-receive'
         POST_CHECKOUT_FILE = 'http://khalil.one/ok/post-checkout'
 
@@ -77,8 +86,11 @@ class AutoDeployManager:
             s.login(ip, user, password)
             self.sendCommond(s, 'mkdir ' + path + ' && cd ~/' + path + ' && git init --bare')
             self.sendCommond(s, 'cd hooks && rm * -R')
-            self.sendCommond(s, 'wget ' + POST_RECIEVE_FILE + ' && chmod +x post-receive')
-            self.sendCommond(s, 'wget ' + POST_CHECKOUT_FILE + ' && chmod +x post-checkout')
+            #self.sendCommond(s, 'wget ' + POST_RECIEVE_FILE + ' && chmod +x post-receive')
+            #self.sendCommond(s, 'wget ' + POST_CHECKOUT_FILE + ' && chmod +x post-checkout')
+            self.sendCommond(s, 'echo ' + self.getPostReceiveContent(path, deploy_path) + ' > post-receive && chmod +x post-receive')
+            self.sendCommond(s, 'echo ' + self.getPostCheckoutContent(path) + ' > post-checkout && chmod +x post-checkout')
+
             s.logout()
         except pxssh.ExceptionPxssh as e:
             print("pxssh failed on login.")
@@ -87,7 +99,7 @@ class AutoDeployManager:
 
         return True
 
-    def addServer(self, repoName, serverName, serverIP, serverUser, serverPassword, serverPath):
+    def addServer(self, repoName, serverName, serverIP, serverUser, serverPassword, serverPath, deployPath):
         repos = json.loads(open('mapping.json').read().strip())
         if repoName in repos:
             new_server = {
@@ -95,7 +107,8 @@ class AutoDeployManager:
                 "ip": serverIP,
                 "user": serverUser,
                 "password": serverPassword,
-                "path": serverPath
+                "path": serverPath,
+                "deploy_path": deployPath
               }
             repos[repoName]['servers'].append(new_server)
         else:
