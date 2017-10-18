@@ -5,6 +5,18 @@ import pexpect
 import os
 from pexpect import pxssh
 
+def doPull(localPath, server):
+    commond = "git push " + server['name'] + " master"
+    print("Running " + commond)
+    child = pexpect.spawn(commond)
+    child.sendline(commond)
+    child.expect('root')
+    child.sendline(server['password'])
+    output = str(child.read()).replace('\\n', '')
+    for o in output.split('\\r'):
+        print(o.strip())
+    print("================================")
+
 def addServer(repoName, serverName, serverIP, serverUser, serverPassword, serverPath):
     repos = json.loads(open('mapping.json').read().strip())
     if repoName in repos:
@@ -22,7 +34,8 @@ def addServer(repoName, serverName, serverIP, serverUser, serverPassword, server
     f.write(json.dumps(repos))
     f.close()
     # Login to server and config
-    configServer(new, repoName)
+    if configServer(new, repoName):
+        doPull(repos[repoName]['localPath'], new)
 
 def sendCommond(pxssh, commond):
     pxssh.sendline(commond)
@@ -37,33 +50,31 @@ def configServer(config ,repo_name):
 
     # ignore ssh key confirm
     #call(shlex.split('ssh-keyscan ' + ip + ' >> ~/.ssh/known_hosts'))
-    '''
-    commond = "ssh " + user + '@' + ip
-    print("Running " + commond)
-    child = pexpect.spawn(commond)
-    child.expect(user)
-    child.sendline(config['password'])
-    #output = str(child.read()).replace('\\n', '')
-    print(child.before)
-    #child = pexpect.spawn('git clone https://github.com/' + repo_name)
-    child.prompt()
-    child.sendline('pwd')
-    print(child.read())
-    '''
+    POST_RECIEVE_FILE = 'http://khalil.one/ok/post-receive'
+    POST_CHECKOUT_FILE = 'http://khalil.one/ok/post-checkout'
+
     try:
         s = pxssh.pxssh()
         s.login(ip, user, password)
-        sendCommond(s, 'cd ~')
-        sendCommond(s, 'git clone https://github.com/' + repo_name + ' ' + path)
+        sendCommond(s, 'mkdir ' + path + ' && cd ~/' + path + ' && git init --bare')
+        sendCommond(s, 'cd hooks && rm * -R')
+        sendCommond(s, 'wget ' + POST_RECIEVE_FILE + ' && chmod +x post-receive')
+        sendCommond(s, 'wget ' + POST_CHECKOUT_FILE + ' && chmod +x post-checkout')
         s.logout()
     except pxssh.ExceptionPxssh as e:
         print("pxssh failed on login.")
         print(e)
+        return False
 
-'''
+    return True
+
+
 import sys
 addServer(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5], sys.argv[6])
+
 '''
+python3 addServer.py khalilleo/Githook-Test test1 45.77.110.160 root Uq*1R1,_QFLXB(=L proj
+
 config = {
     "name": "test1",
     "ip": "45.77.110.160",
@@ -72,3 +83,4 @@ config = {
     "path": "proj"
 }
 configServer(config, 'khalilleo/Githook-Test')
+'''
