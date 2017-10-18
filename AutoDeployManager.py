@@ -17,7 +17,7 @@ class AutoDeployManager:
     def pullRepo(self, git_json):
         os.chdir(ROOT)
         mapping = self.getMappingJson()
-        repo_name = git_json['repository']['name']
+        repo_name = git_json['repository']['full_name']
         localPath = mapping[repo_name]['localPath']
         # First pull locally
         os.chdir(ROOT + '/' + localPath)
