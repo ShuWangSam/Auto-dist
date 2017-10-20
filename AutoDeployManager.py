@@ -40,7 +40,7 @@ class AutoDeployManager:
         if localPath:
             os.chdir(ROOT + '/' + localPath)
         '''
-        commond = "git push " + server['name'] + " master"
+        commond = "git push " + server['name'] + " " + server['branch']
         print("Running " + commond)
         child = pexpect.spawn(commond)
         child.sendline(commond)
@@ -99,7 +99,7 @@ class AutoDeployManager:
 
         return True
 
-    def addServer(self, repoName, serverName, serverIP, serverUser, serverPassword, serverPath, deployPath):
+    def addServer(self, repoName, serverName, serverIP, serverUser, serverPassword, serverPath, deployPath, branch):
         repos = json.loads(open('mapping.json').read().strip())
         if repoName in repos:
             new_server = {
@@ -108,7 +108,8 @@ class AutoDeployManager:
                 "user": serverUser,
                 "password": serverPassword,
                 "path": serverPath,
-                "deploy_path": deployPath
+                "deploy_path": deployPath,
+                "branch": branch
               }
             repos[repoName]['servers'].append(new_server)
         else:
