@@ -48,7 +48,7 @@ class AutoDeployManager:
         self.runLocalCommond(commond)
 
         # then pull?
-        call(shlex.split('git pull origin ' + branch))
+        call(shlex.split('git pull origin ' + server['branch']))
 
         commond = "git push " + server['name'] + " " + server['branch']
         print("Running " + commond)
