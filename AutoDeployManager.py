@@ -45,7 +45,7 @@ class AutoDeployManager:
         '''
         # Switch branch locally
         #commond = 'git stash && git pull origin ' + server['branch'] + ' -f'
-        commond = 'git checkout  -f ' + server['branch'] + ' && git reset --hard origin/' + server['branch']
+        commond = 'git checkout  -f ' + server['branch'] + ' && git reset origin/' + server['branch']
         self.runLocalCommond(commond)
 
         commond = "git push " + server['name'] + " " + server['branch']
