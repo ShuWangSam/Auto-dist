@@ -70,7 +70,7 @@ class AutoDeployManager:
         print(pxssh.before)
 
     def getPostReceiveContent(self, config):
-        text = "'#!/bin/bash \n while \nread oldrev newrev ref \ndo \ngit --work-tree=/var/www/" + config['deploy_path'] + ' --git-dir=/root/' + config['path'] + " checkout " + config['branch']  + " -f \ndone'"
+        text = "'#!/bin/bash \n while \nread oldrev newrev ref \ndo if [[ $ref =~ .*/" + config['branch'] + "$ ]]; \nthen \ngit --work-tree=/var/www/" + config['deploy_path'] + ' --git-dir=/root/' + config['path'] + " checkout " + config['branch']  + " -f \nfi \ndone'"
         return text
 
     def getPostCheckoutContent(self, config):
