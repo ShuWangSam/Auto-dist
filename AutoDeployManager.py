@@ -28,7 +28,7 @@ class AutoDeployManager:
         # First pull locally
         os.chdir(ROOT + '/' + localPath)
 
-        #call(shlex.split('git pull origin ' + branch))
+        call(shlex.split('git pull origin ' + branch))
         #os.chdir(ROOT)
         # Then push
         servers = mapping[repo_name]['servers']
