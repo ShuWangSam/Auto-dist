@@ -5,8 +5,8 @@ import pexpect
 import os
 from pexpect import pxssh
 
-#ROOT = '/root/Auto-dist'
-ROOT = '/Users/khalil/Documents/Auto-dist'
+ROOT = '/root/Auto-dist'
+#ROOT = '/Users/khalil/Documents/Auto-dist'
 
 class AutoDeployManager:
     def __init__(self):
@@ -27,7 +27,7 @@ class AutoDeployManager:
         branch = git_json['ref'].split("/")[-1]
         # First pull locally
         os.chdir(ROOT + '/' + localPath)
-        
+
         #call(shlex.split('git pull origin ' + branch))
         #os.chdir(ROOT)
         # Then push
