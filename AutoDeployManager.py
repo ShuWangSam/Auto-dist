@@ -44,11 +44,8 @@ class AutoDeployManager:
         '''
         # Switch branch locally
         #commond = 'git stash && git pull origin ' + server['branch'] + ' -f'
-        commond = 'git checkout  -f ' + server['branch'] + ' && git reset origin/' + server['branch']
+        commond = 'git checkout -f ' + server['branch'] + ' && git reset -f origin/' + server['branch'] + ' && ' + 'git pull origin ' + server['branch']
         self.runLocalCommond(commond)
-
-        # then pull?
-        call(shlex.split('git pull origin ' + server['branch']))
 
         commond = "git push " + server['name'] + " " + server['branch']
         print("Running " + commond)
