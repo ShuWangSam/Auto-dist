@@ -28,7 +28,6 @@ class AutoDeployManager:
         # First pull locally
         os.chdir(ROOT + '/' + localPath)
 
-        call(shlex.split('git pull origin ' + branch))
         #os.chdir(ROOT)
         # Then push
         servers = mapping[repo_name]['servers']
@@ -47,6 +46,9 @@ class AutoDeployManager:
         #commond = 'git stash && git pull origin ' + server['branch'] + ' -f'
         commond = 'git checkout  -f ' + server['branch'] + ' && git reset origin/' + server['branch']
         self.runLocalCommond(commond)
+
+        # then pull?
+        call(shlex.split('git pull origin ' + branch))
 
         commond = "git push " + server['name'] + " " + server['branch']
         print("Running " + commond)
