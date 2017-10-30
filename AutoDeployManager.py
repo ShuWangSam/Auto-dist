@@ -24,14 +24,17 @@ class AutoDeployManager:
         mapping = self.getMappingJson()
         repo_name = git_json['repository']['full_name']
         localPath = mapping[repo_name]['localPath']
+        branch = git_json['ref'].split("/")[-1]
         # First pull locally
         os.chdir(ROOT + '/' + localPath)
-        call(shlex.split('git pull'))
+        
+        #call(shlex.split('git pull origin ' + branch))
         #os.chdir(ROOT)
         # Then push
         servers = mapping[repo_name]['servers']
         for i in servers:
-            self.doPull(i)
+            if branch == i['branch']:
+                self.doPull(i)
         print('Successfully push to all remote')
         return
 
@@ -40,6 +43,11 @@ class AutoDeployManager:
         if localPath:
             os.chdir(ROOT + '/' + localPath)
         '''
+        # Switch branch locally
+        #commond = 'git stash && git pull origin ' + server['branch'] + ' -f'
+        commond = 'git checkout  -f ' + server['branch'] + ' && git reset --hard origin/' + server['branch']
+        self.runLocalCommond(commond)
+
         commond = "git push " + server['name'] + " " + server['branch']
         print("Running " + commond)
         child = pexpect.spawn(commond)
@@ -61,11 +69,11 @@ class AutoDeployManager:
         pxssh.prompt()
         print(pxssh.before)
 
-    def getPostReceiveContent(self, path, deploy_path):
-        text = "'#!/bin/bash \n while \nread oldrev newrev ref \ndo \ngit --work-tree=/var/www/" + deploy_path + ' --git-dir=/root/' + path + " checkout -f \ndone'"
+    def getPostReceiveContent(self, config):
+        text = "'#!/bin/bash \n while \nread oldrev newrev ref \ndo \ngit --work-tree=/var/www/" + config['deploy_path'] + ' --git-dir=/root/' + config['path'] + " checkout " + config['branch']  + " -f \ndone'"
         return text
 
-    def getPostCheckoutContent(self, path):
+    def getPostCheckoutContent(self, config):
         text = 'echo "Done customization"'
         return text
 
@@ -88,8 +96,8 @@ class AutoDeployManager:
             self.sendCommond(s, 'cd hooks && rm * -R')
             #self.sendCommond(s, 'wget ' + POST_RECIEVE_FILE + ' && chmod +x post-receive')
             #self.sendCommond(s, 'wget ' + POST_CHECKOUT_FILE + ' && chmod +x post-checkout')
-            self.sendCommond(s, 'echo ' + self.getPostReceiveContent(path, deploy_path) + ' > post-receive && chmod +x post-receive')
-            self.sendCommond(s, 'echo ' + self.getPostCheckoutContent(path) + ' > post-checkout && chmod +x post-checkout')
+            self.sendCommond(s, 'echo ' + self.getPostReceiveContent(config) + ' > post-receive && chmod +x post-receive')
+            self.sendCommond(s, 'echo ' + self.getPostCheckoutContent(config) + ' > post-checkout && chmod +x post-checkout')
 
             s.logout()
         except pxssh.ExceptionPxssh as e:

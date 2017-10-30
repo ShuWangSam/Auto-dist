@@ -2,11 +2,15 @@
     "khalilleo/Githook-Test": {
         "localPath": "khalilleo/Githook-Test",
         "servers": [
-        ]
-    },
-    "khalilleo/khalilleo.github.io": {
-        "localPath": "khalilleo/khalilleo.github.io",
-        "servers": [
+            {
+                "name": "test1",
+                "ip": "45.77.110.160",
+                "user": "root",
+                "password": "Uq*1R1,_QFLXB(=L",
+                "path": "project1",
+                "deploy_path": "API",
+                "branch": "master"
+            },
             {
                 "name": "test2",
                 "ip": "45.77.110.160",
@@ -14,7 +18,7 @@
                 "password": "Uq*1R1,_QFLXB(=L",
                 "path": "project2",
                 "deploy_path": "html",
-                "branch": "master"
+                "branch": "test"
             }
         ]
     }
