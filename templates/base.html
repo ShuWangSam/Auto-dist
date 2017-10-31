@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>管理后台</title>
+
+  <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+  <link rel="stylesheet" href="{{ url_for('static',filename='css/bootstrap.min.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static',filename='css/ionicons.min.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static',filename='css/AdminLTE.min.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static',filename='css/skin-blue.min.css') }}">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
+
+  <script src="{{ url_for('static',filename='js/jquery.min.js') }}"></script>
+  <script src="{{ url_for('static',filename='js/bootstrap.min.js') }}"></script>
+  <script src="{{ url_for('static',filename='js/jquery.slimscroll.min.js') }}"></script>
+  <script src="{{ url_for('static',filename='js/fastclick.js') }}"></script>
+  <script src="{{ url_for('static',filename='js/adminlte.min.js') }}"></script>
+  <script src="{{ url_for('static',filename='js/demo.js') }}"></script>
+  <script src="{{ url_for('static',filename='js/bootbox.min.js') }}"></script>
+  <script type="text/javascript">
+    function showAlert(message) {
+      bootbox.alert({
+          message: message,
+          size: 'small',
+          backdrop: true
+      });
+    }
+  </script>
+</head>
+
+<body class="hold-transition skin-blue sidebar-mini">
+  <div class="wrapper">
+
+    <header class="main-header">
+      <!-- Logo -->
+      <a href="all_proj" class="logo">
+        <!-- logo for regular state and mobile devices -->
+        <span class="logo-lg">管理后台</span>
+      </a>
+      <!-- Header Navbar: style can be found in header.less -->
+      <nav class="navbar navbar-static-top">
+        <!-- Sidebar toggle button-->
+        <a href="#" class="sidebar-toggle" data-toggle="push-menu" role="button">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </a>
+      </nav>
+    </header>
+    <!-- Left side column. contains the logo and sidebar -->
+    <aside class="main-sidebar">
+      <!-- sidebar: style can be found in sidebar.less -->
+      <section class="sidebar">
+        <!-- sidebar menu: : style can be found in sidebar.less -->
+        <ul class="sidebar-menu" data-widget="tree">
+          <li class="header">主菜单</li>
+          {% if route in ["all_proj", "init_proj"] %}
+            <li class="active treeview menu-open">
+          {% else %}
+            <li class="treeview">
+          {% endif %}
+            <a href="#">
+            <i class="fa fa-dashboard"></i> <span>项目管理</span>
+            <span class="pull-right-container">
+              <i class="fa fa-angle-left pull-right"></i>
+            </span>
+          </a>
+            <ul class="treeview-menu">
+            {% if route == 'all_proj' %}
+              <li class='active'>
+            {% else %}
+              <li>
+            {% endif %}
+                <a href="all_proj"><i class="fa fa-circle-o"></i>所有项目</a>
+              </li>
+            {% if route == 'init_proj' %}
+              <li class='active'>
+            {% else %}
+              <li>
+            {% endif %}
+                <a href="init_proj"><i class="fa fa-circle-o"></i>添加项目</a>
+              </li>
+
+            </ul>
+          </li>
+
+          {% if route in ["add_server", "all_server"] %}
+            <li class="active treeview menu-open">
+          {% else %}
+            <li class="treeview">
+          {% endif %}
+            <a href="#">
+            <i class="fa fa-edit"></i> <span>服务器管理</span>
+            <span class="pull-right-container">
+              <i class="fa fa-angle-left pull-right"></i>
+            </span>
+          </a>
+            <ul class="treeview-menu">
+            {% if route == 'all_server' %}
+              <li class='active'>
+            {% else %}
+              <li>
+            {% endif %}
+                <a href="all_server"><i class="fa fa-circle-o"></i>所有服务器</a>
+              </li>
+
+            {% if route == 'add_server' %}
+              <li class='active'>
+            {% else %}
+              <li>
+            {% endif %}
+                <a href="add_server"><i class="fa fa-circle-o"></i>添加服务器</a>
+              </li>
+            </ul>
+          </li>
+
+          </li>
+        </ul>
+      </section>
+    </aside>
+
+    <div class="content-wrapper">
+		{% block content %}{% endblock %}
+    </div>
+
+    <!-- /.content-wrapper -->
+    <footer class="main-footer">
+      <div class="pull-right hidden-xs">
+      </div>
+      <strong>Copyright &copy; 2017</strong> All rights reserved. </footer>
+
+
+    <!-- Add the sidebar's background. This div must be placed
+       immediately after the control sidebar -->
+    <div class="control-sidebar-bg"></div>
+  </div>
+  <!-- ./wrapper -->
+
+
+</body>
+</html>

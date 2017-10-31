@@ -5,8 +5,8 @@ import pexpect
 import os
 from pexpect import pxssh
 
-ROOT = '/root/Auto-dist'
-#ROOT = '/Users/khalil/Documents/Auto-dist'
+#ROOT = '/root/Auto-dist'
+ROOT = '/Users/khalil/Documents/Auto-dist'
 
 class AutoDeployManager:
     def __init__(self):
@@ -121,7 +121,7 @@ class AutoDeployManager:
               }
             repos[repoName]['servers'].append(new_server)
         else:
-            return
+            return {"status": 1, 'message': '项目不存在'}
         f = open("mapping.json", 'w')
         f.write(json.dumps(repos))
         f.close()
@@ -132,6 +132,8 @@ class AutoDeployManager:
             os.chdir(localPath)
             self.addGitRemote(new_server)
             self.doPull(new_server)
+        os.chdir(ROOT)
+        return {"status": 0}
 
     # Init proj
     def initProj(self, git_url):
@@ -153,8 +155,9 @@ class AutoDeployManager:
             repos[full_name]['localPath'] = full_name
             repos[full_name]['servers'] = []
         else:
-            print('Proj already exist')
-            return
+            #print('Proj already exist')
+            return {"status": 1, 'message': 'Proj already exist'}
         f = open("mapping.json", 'w')
         f.write(json.dumps(repos))
-        print("Proj init successfully")
+        return {"status": 0}
+        #print("Proj init successfully")

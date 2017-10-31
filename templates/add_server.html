@@ -1,0 +1,124 @@
+{% extends "base.html" %} {% block content %}
+<script type="text/javascript">
+
+function submit(){
+    let project = $("#project").val();
+    let name = $("#name").val();
+    let ip = $("#ip").val();
+    let user = $("#user").val();
+    let password = $("#password").val();
+    let path = $("#path").val();
+    let deploy_path = $("#deploy_path").val();
+    let branch = $("#branch").val();
+
+    if (project.length == 0 ||
+        name.length == 0 ||
+        ip.length == 0 ||
+        user.length == 0 ||
+        password.length == 0 ||
+        path.length == 0 ||
+        deploy_path.length == 0 ||
+        branch.length == 0){
+        showAlert('信息未填写完整');
+        return;
+    }
+    payload = {
+        'project': project,
+        'name': name,
+        'ip': ip,
+        'user': user,
+        'password': password,
+        'path': path,
+        'deploy_path': deploy_path,
+        'branch': branch
+    };
+
+    $('#submit_button').attr('class', 'btn btn-default disabled');
+    $('#submit_button').html('请稍等');
+    $.ajax({
+        type: "POST",
+        data: {
+          payload: JSON.stringify(payload)
+        },
+        url: "do/add_server"
+    }).done(function (res) {
+        $('#submit_button').attr('class', 'btn btn-primary');
+        $('#submit_button').html('提交');
+        $data = res;
+        console.log($data);
+        if ($data["status"] == 0){
+            window.location.href = 'all_server';
+        }
+        else{
+            alert('提交失败，请重试');
+        }
+    }).fail(function (jqXHR, textStatus, errorThrown) {
+        $('#submit_button').attr('class', 'btn btn-primary');
+        $('#submit_button').html('提交');
+        alert('提交失败，请重试');
+    });
+
+}
+
+</script>
+<section class="content-header">
+    <h1>添加项目</h1>
+</section>
+<section class="content">
+    <div class="row">
+        <div class="col-md-6">
+            <!-- general form elements -->
+            <div class="box box-primary">
+                <div class="box-header with-border">
+                    <h3 class="box-title">服务器信息</h3>
+                </div>
+
+                    <div class="box-body">
+                        <div class="form-group">
+                            <label for="project">所属项目</label>
+                            <select id="project" class="form-control">
+                              {% for item in data %}
+                                <option>{{item}}</option>
+                              {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="name">服务器名称</label>
+                            <input class="form-control" id="name" value='test3'>
+                        </div>
+                        <div class="form-group">
+                            <label for="ip">IP地址</label>
+                            <input class="form-control" id="ip" value='45.77.110.160'>
+                        </div>
+                        <div class="form-group">
+                            <label for="user">用户名</label>
+                            <input class="form-control" id="user" value='root'>
+                        </div>
+                        <div class="form-group">
+                            <label for="password">密码</label>
+                            <input class="form-control" id="password" value='Uq*1R1,_QFLXB(=L'>
+                        </div>
+                        <div class="form-group">
+                            <label for="path">中转目录</label>
+                            <input class="form-control" id="path" value='project3'>
+                        </div>
+                        <div class="form-group">
+                            <label for="deploy_path">生产目录</label>
+                            <input class="form-control" id="deploy_path" value='html'>
+                        </div>
+                        <div class="form-group">
+                            <label for="branch">Branch分支</label>
+                            <input class="form-control" id="branch" value='master'>
+                        </div>
+                    </div>
+                    <div class="box-footer">
+                        <button onclick="submit()" id='submit_button' class="btn btn-primary">提交</button>
+                    </div>
+
+            </div>
+            <!-- /.box -->
+        </div>
+    </div>
+    <!-- /.row -->
+</section>
+{% endblock %}

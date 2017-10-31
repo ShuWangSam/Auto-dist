@@ -1,0 +1,70 @@
+{% extends "base.html" %} {% block content %}
+<script type="text/javascript">
+
+function submit(){
+    let git_url = $("#git_url").val();
+    if (git_url.length == 0){
+        showAlert('信息未填写完整');
+        return;
+    }
+    payload = {
+        'git_url': git_url,
+    };
+
+    $('#submit_button').attr('class', 'btn btn-default disabled');
+    $('#submit_button').html('请稍等');
+    $.ajax({
+        type: "POST",
+        data: {
+          payload: JSON.stringify(payload)
+        },
+        url: "do/init_proj"
+    }).done(function (res) {
+        $('#submit_button').attr('class', 'btn btn-primary');
+        $('#submit_button').html('提交');
+        $data = res;
+        console.log($data);
+        if ($data["status"] == 0){
+            window.location.href = 'all_proj';
+        }
+        else{
+            alert('提交失败，请重试');
+        }
+    }).fail(function (jqXHR, textStatus, errorThrown) {
+        $('#submit_button').attr('class', 'btn btn-primary');
+        $('#submit_button').html('提交');
+        alert('提交失败，请重试');
+    });
+
+}
+
+</script>
+<section class="content-header">
+    <h1>添加项目</h1>
+</section>
+<section class="content">
+    <div class="row">
+        <div class="col-md-6">
+            <!-- general form elements -->
+            <div class="box box-primary">
+                <div class="box-header with-border">
+                    <h3 class="box-title">项目信息</h3>
+                </div>
+
+                    <div class="box-body">
+                        <div class="form-group">
+                            <label for="courseCode">Github地址</label>
+                            <input class="form-control" id="git_url" value=''>
+                        </div>
+                    </div>
+                    <div class="box-footer">
+                        <button onclick="submit()" id='submit_button' class="btn btn-primary">提交</button>
+                    </div>
+
+            </div>
+            <!-- /.box -->
+        </div>
+    </div>
+    <!-- /.row -->
+</section>
+{% endblock %}
