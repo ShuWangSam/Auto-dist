@@ -50,6 +50,7 @@ class AutoDeployManager:
 
         commond = "git push " + server['name'] + " " + server['branch']
         print("Running " + commond)
+
         child = pexpect.spawn(commond)
         child.sendline(commond)
         child.expect(server['user'])
@@ -70,7 +71,7 @@ class AutoDeployManager:
         print(pxssh.before)
 
     def getPostReceiveContent(self, config):
-        text = "'#!/bin/bash \n while \nread oldrev newrev ref \ndo if [[ $ref =~ .*/" + config['branch'] + "$ ]]; \nthen \ngit --work-tree=/var/www/" + config['deploy_path'] + ' --git-dir=/root/' + config['path'] + " checkout " + config['branch']  + " -f \nfi \ndone'"
+        text = "'#!/bin/bash \n while \nread oldrev newrev ref \ndo if [[ $ref =~ .*/" + config['branch'] + "$ ]]; \nthen \ngit checkout -f " + config['branch']  + "\nfi \ndone'"
         return text
 
     def getPostCheckoutContent(self, config):
