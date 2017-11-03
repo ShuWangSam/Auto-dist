@@ -62,7 +62,7 @@ def all_server():
 @app.route('/do/init_proj', methods=['POST'])
 def do_init_proj():
     data = json.loads(request.form.get("payload"))
-    git_url = data['git_url']
+    git_url = data['git_url'].strip('/')
     result = deployManager.initProj(git_url)
     return jsonify(result)
 
