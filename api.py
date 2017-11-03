@@ -82,5 +82,5 @@ def do_add_server():
     return jsonify(result)
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=8081, debug=True, threaded=True)
+    app.run(host='0.0.0.0', port=80, debug=True, threaded=True)
     #pullRepo({})

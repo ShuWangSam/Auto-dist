@@ -1,1 +1,1 @@
-{"khalilleo/augustctl": {"localPath": "khalilleo/augustctl", "servers": []}, "ace68723/Autro_www": {"localPath": "ace68723/Autro_www", "servers": [{"name": "master-server", "ip": "45.77.110.160", "user": "root", "password": "Uq*1R1,_QFLXB(=L", "path": "master-pro", "deploy_path": "API", "branch": "master"}, {"name": "staging-server", "ip": "45.77.110.160", "user": "root", "password": "Uq*1R1,_QFLXB(=L", "path": "staging-proj", "deploy_path": "html", "branch": "staging"}]}}
+{}
