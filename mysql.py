@@ -9,6 +9,9 @@ DB_NAME = "test666"
 
 class mysql:
     def __init__(self):
+        pass
+
+    def connect(self):
         self.db = MySQLdb.connect(
                      host=DB_HOST,    # your host, usually localhost
                      user=DB_USER,         # your username
@@ -16,22 +19,29 @@ class mysql:
                      db=DB_NAME)        # name of the data base
         self.cur = self.db.cursor()
 
-
     def query(self, commond):
-        self.cur.execute(commond)
-        return self.cur.fetchall()
-        # try:
-        #     self.cur.execute(commond)
-        #     return self.cur.fetchall()
-        # except:
-        #     return False
+        try:
+            self.connect()
+            self.cur.execute(commond)
+            return self.cur.fetchall()
+        except:
+            return False
+
+    def get_last_insert_id(self):
+        try:
+            self.cur.execute("SELECT LAST_INSERT_ID() ;")
+            return self.cur.fetchall()[0][0]
+        except:
+            return False
 
     def insert(self, commond):
+        self.connect()
         self.cur.execute(commond)
         self.db.commit()
-        new_object_id = self.query("SELECT LAST_INSERT_ID() ;")[0][0]
+        new_object_id = self.get_last_insert_id()
         return new_object_id
         # try:
+        #     self.connect()
         #     self.cur.execute(commond)
         #     self.db.commit()
         #     new_object_id = self.query("SELECT LAST_INSERT_ID() ;")[0][0]
@@ -42,6 +52,7 @@ class mysql:
 
     def update(self, commond):
         try:
+            self.connect()
             self.cur.execute(commond)
             self.db.commit()
             return True
@@ -82,6 +93,7 @@ class mysql:
 
         #clean up result
         servers = []
+        #print(result)
         for row in result:
                 servers.append(
                     {
@@ -102,6 +114,7 @@ class mysql:
         commond = "INSERT INTO Server (name,ip,user,password, path, deploy_path, branch, deleted) VALUES ('" + newServer['name'] +"','" + newServer['ip'] +"', '" + newServer['user'] +"', '" + newServer['password'] +\
         "', '" + newServer['path'] + "', '" + newServer['deploy_path'] +"', '" + newServer['branch'] + "', 0);"
         new_server_id = self.insert(commond)
+
         if new_server_id:
             return self.addRelation(new_server_id, projectId)
         else:
