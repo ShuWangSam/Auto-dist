@@ -5,15 +5,14 @@ import pexpect
 import os
 from pexpect import pxssh
 
-ROOT = '/root/Auto-dist'
-#ROOT = '/Users/khalil/Documents/Auto-dist'
+
+#ROOT = '/root/Auto-dist'
+ROOT = '/Users/khalil/Documents/Auto-dist'
+
 
 class AutoDeployManager:
-    def __init__(self):
-        pass
-
-    def getMappingJson(self):
-        return json.loads(open('./mapping.json').read())
+    def __init__(self, database):
+        self.database = database
 
     def runLocalCommond(self, commond):
         print("Running: " + commond)
@@ -21,7 +20,7 @@ class AutoDeployManager:
 
     def pullRepo(self, git_json):
         os.chdir(ROOT)
-        mapping = self.getMappingJson()
+        mapping = self.db.getAllRepo()
         repo_name = git_json['repository']['full_name']
         localPath = mapping[repo_name]['localPath']
         branch = git_json['ref'].split("/")[-1]
@@ -32,7 +31,7 @@ class AutoDeployManager:
         # Then push
         servers = mapping[repo_name]['servers']
         for i in servers:
-            if branch == i['branch']:
+            if branch == i['branch'] and not i['deleted']:
                 self.doPull(i)
         print('Successfully push to all remote')
         return
@@ -108,8 +107,8 @@ class AutoDeployManager:
 
         return True
 
-    def addServer(self, repoName, serverName, serverIP, serverUser, serverPassword, serverPath, deployPath, branch):
-        repos = json.loads(open('mapping.json').read().strip())
+    def addServer(self, repoName, repoId, serverName, serverIP, serverUser, serverPassword, serverPath, deployPath, branch):
+        repos = self.database.getAllRepo()
         if repoName in repos:
             new_server = {
                 "name": serverName,
@@ -118,14 +117,13 @@ class AutoDeployManager:
                 "password": serverPassword,
                 "path": serverPath,
                 "deploy_path": deployPath,
-                "branch": branch
+                "branch": branch,
+                'deleted': False
               }
-            repos[repoName]['servers'].append(new_server)
+            self.database.addServer(new_server, repoId)
         else:
             return {"status": 1, 'message': '项目不存在'}
-        f = open("mapping.json", 'w')
-        f.write(json.dumps(repos))
-        f.close()
+
         # Login to server and config
         localPath = repos[repoName]['localPath']
         if self.configServer(new_server, repoName):
@@ -150,15 +148,14 @@ class AutoDeployManager:
 
         # Write to json
         os.chdir(ROOT)
-        repos = json.loads(open('mapping.json').read().strip())
+        repos = self.database.getAllRepo()
         if full_name not in repos:
-            repos[full_name] = {}
-            repos[full_name]['localPath'] = full_name
-            repos[full_name]['servers'] = []
+            self.database.addProject(full_name, full_name)
         else:
             #print('Proj already exist')
             return {"status": 1, 'message': 'Proj already exist'}
-        f = open("mapping.json", 'w')
-        f.write(json.dumps(repos))
         return {"status": 0}
         #print("Proj init successfully")
+
+
+#a = AutoDeployManager()

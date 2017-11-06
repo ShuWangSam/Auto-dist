@@ -1,28 +1,26 @@
 {% extends "base.html" %} {% block content %}
 <!-- Content Header (Page header) -->
 <script type="text/javascript">
-
-  // function delete(classId){
-  // bootbox.confirm({
-  //     message: "确认删除?",
-  //     size: 'small',
-  //     backdrop: true,
-  //     buttons: {
-  //         confirm: {
-  //             label: '确认'
-  //         },
-  //         cancel: {
-  //             label: '取消'
-  //         }
-  //     },
-  //     callback: function (result) {
-  //       if (result === true){
-  //         window.location.href = 'action/delete?classId=' + classId;
-  //       }
-  //     }
-  // });
-    //
-  // }
+  function delete_server(server_id){
+    bootbox.confirm({
+        message: "确认删除?",
+        size: 'small',
+        backdrop: true,
+        buttons: {
+            confirm: {
+                label: '确认'
+            },
+            cancel: {
+                label: '取消'
+            }
+        },
+        callback: function (result) {
+          if (result === true){
+            window.location.href = 'do/delete_server?server_id=' + server_id;
+          }
+        }
+    });
+  }
 </script>
 
 <section class="content-header">
@@ -49,6 +47,7 @@
                             <th>当前branch</th>
                             <th>中转目录(基于~/)</th>
                             <th>生产目录(基于~/var/www)</th>
+                            <th>操作</th>
                         </tr>
                         {% for item in data %}
                         <tr>
@@ -58,6 +57,7 @@
                             <td>{{ item.branch }}</td>
                             <td>{{ item.path }}</td>
                             <td>{{ item.deploy_path }}</td>
+                            <td><a data-toggle="confirmation" href="javascript:delete_server('{{item.id}}');">删除</a></td>
                         </tr>
                         {% endfor %}
                     </table>

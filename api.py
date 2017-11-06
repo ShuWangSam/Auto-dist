@@ -10,13 +10,16 @@ from subprocess import call
 import shlex
 import pexpect
 import AutoDeployManager
+import mysql
 
 from flask_cors import CORS, cross_origin
 app = Flask(__name__)
 CORS(app)
 logging.getLogger('flask_cors').level = logging.DEBUG
 
-deployManager = AutoDeployManager.AutoDeployManager()
+database = mysql.mysql()
+
+deployManager = AutoDeployManager.AutoDeployManager(database)
 
 @app.route('/githook', methods=['POST'])
 def githook():
@@ -30,7 +33,8 @@ def init_proj():
 
 @app.route('/all_proj')
 def all_proj():
-    repos = json.loads(open('mapping.json').read().strip())
+    #repos = json.loads(open('mapping.json').read().strip())
+    repos = database.getAllRepo()
     new = []
     for i in repos:
         data = {
@@ -43,15 +47,17 @@ def all_proj():
 
 @app.route('/add_server')
 def add_server():
-    repos = json.loads(open('mapping.json').read().strip())
+    #repos = json.loads(open('mapping.json').read().strip())
+    repos = database.getAllRepo()
     new = []
     for i in repos:
-        new.append(i)
+        new.append({"name": i, "id": repos[i]['id']})
     return render_template("add_server.html", route='add_server', data=new)
 
 @app.route('/all_server')
 def all_server():
-    repos = json.loads(open('mapping.json').read().strip())
+    #repos = json.loads(open('mapping.json').read().strip())
+    repos = database.getAllRepo()
     new = []
     for proj in repos:
         for server in repos[proj]['servers']:
@@ -70,7 +76,8 @@ def do_init_proj():
 @app.route('/do/add_server', methods=['POST'])
 def do_add_server():
     data = json.loads(request.form.get("payload"))
-    project = data['project']
+    project_name = data['project_name']
+    project_id = data['project_id']
     name = data['name']
     ip = data['ip']
     user = data['user']
@@ -78,9 +85,17 @@ def do_add_server():
     path = data['path']
     deploy_path = data['deploy_path']
     branch = data['branch']
-    result = deployManager.addServer(project, name, ip, user, password, path, deploy_path, branch)
+    result = deployManager.addServer(project_name, project_id, name, ip, user, password, path, deploy_path, branch)
     return jsonify(result)
 
+
+@app.route('/do/delete_server')
+def do_delete_server():
+    server_id = request.args.get("server_id")
+    result = database.deleteServer(server_id)
+    return redirect(url_for('all_server'))
+
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=80, debug=True, threaded=True)
+    app.run(host='0.0.0.0', port=8081, debug=True, threaded=True)
     #pullRepo({})
+    #all_proj()

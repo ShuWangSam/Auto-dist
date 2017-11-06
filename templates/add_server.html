@@ -2,7 +2,16 @@
 <script type="text/javascript">
 
 function submit(){
+
     let project = $("#project").val();
+    let project_id;
+    let project_to_id = {{ data | safe }};
+
+    for (i = 0; i < project_to_id.length; i++) {
+        if (project_to_id[i].name === project){
+          project_id = project_to_id[i].id
+        }
+    }
     let name = $("#name").val();
     let ip = $("#ip").val();
     let user = $("#user").val();
@@ -23,7 +32,8 @@ function submit(){
         return;
     }
     payload = {
-        'project': project,
+        'project_name': project,
+        'project_id': project_id,
         'name': name,
         'ip': ip,
         'user': user,
@@ -45,7 +55,6 @@ function submit(){
         $('#submit_button').attr('class', 'btn btn-primary');
         $('#submit_button').html('提交');
         $data = res;
-        console.log($data);
         if ($data["status"] == 0){
             window.location.href = 'all_server';
         }
@@ -78,7 +87,7 @@ function submit(){
                             <label for="project">所属项目</label>
                             <select id="project" class="form-control">
                               {% for item in data %}
-                                <option>{{item}}</option>
+                                <option>{{item['name']}}</option>
                               {% endfor %}
                             </select>
                         </div>
