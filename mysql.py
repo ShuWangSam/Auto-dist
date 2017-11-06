@@ -35,20 +35,15 @@ class mysql:
             return False
 
     def insert(self, commond):
-        self.connect()
-        self.cur.execute(commond)
-        self.db.commit()
-        new_object_id = self.get_last_insert_id()
-        return new_object_id
-        # try:
-        #     self.connect()
-        #     self.cur.execute(commond)
-        #     self.db.commit()
-        #     new_object_id = self.query("SELECT LAST_INSERT_ID() ;")[0][0]
-        #     return new_object_id
-        # except:
-        #     self.db.rollback()
-        #     return None
+        try:
+            self.connect()
+            self.cur.execute(commond)
+            self.db.commit()
+            new_object_id = self.get_last_insert_id()
+            return new_object_id
+        except:
+            self.db.rollback()
+            return None
 
     def update(self, commond):
         try:
