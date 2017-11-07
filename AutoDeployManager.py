@@ -6,8 +6,8 @@ import os
 from pexpect import pxssh
 
 
-#ROOT = '/root/Auto-dist'
-ROOT = '/Users/khalil/Documents/Auto-dist'
+ROOT = '/root/Auto-dist'
+#ROOT = '/Users/khalil/Documents/Auto-dist'
 
 
 class AutoDeployManager:
