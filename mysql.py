@@ -2,10 +2,10 @@ import MySQLdb
 import json
 import pprint
 
-DB_HOST = "50.62.209.148"
-DB_USER = "test666"
-DB_PASSWORD = "test666"
-DB_NAME = "test666"
+DB_HOST = "sql9.freemysqlhosting.net"
+DB_USER = "sql9203618"
+DB_PASSWORD = "RVuDFfuDXM"
+DB_NAME = "sql9203618"
 
 class mysql:
     def __init__(self):
@@ -20,12 +20,15 @@ class mysql:
         self.cur = self.db.cursor()
 
     def query(self, commond):
-        try:
-            self.connect()
-            self.cur.execute(commond)
-            return self.cur.fetchall()
-        except:
-            return False
+        self.connect()
+        self.cur.execute(commond)
+        return self.cur.fetchall()
+        # try:
+        #     self.connect()
+        #     self.cur.execute(commond)
+        #     return self.cur.fetchall()
+        # except:
+        #     return False
 
     def get_last_insert_id(self):
         try:
