@@ -1,11 +1,12 @@
 import MySQLdb
 import json
 import pprint
+import hashlib
 
 DB_HOST = "sql9.freemysqlhosting.net"
-DB_USER = "sql9203618"
-DB_PASSWORD = "RVuDFfuDXM"
-DB_NAME = "sql9203618"
+DB_USER = "sql9203658"
+DB_PASSWORD = "NUIWgdVCdP"
+DB_NAME = "sql9203658"
 
 class mysql:
     def __init__(self):
@@ -130,12 +131,19 @@ class mysql:
         # Just hide, not really delete
         return self.update("UPDATE Server SET deleted=1 WHERE id=" + str(server_id))
 
+    def login(self, username, password):
+        md5 = hashlib.md5(password.encode("utf")).hexdigest()
+        query = self.query("SELECT id, username, password FROM User WHERE username='" + username + "' AND password='" + password + "'")
+        if len(query) == 0:
+            return None
+        return {'id': query[0][0], 'username': username, 'password': password}
+
     # def deleteProject(self, project_id):
     #     # Just hide, not really delete
     #     return self.update("UPDATE Server SET deleted=1 WHERE id=" + str(server_id))
 
 # a = mysql()
-# a.deleteServer(36)
+# print(a.login('test', 'test'))
 
 # a = mysql()
 # print(a.getAllRepo())
