@@ -133,10 +133,10 @@ class mysql:
 
     def login(self, username, password):
         md5 = hashlib.md5(password.encode("utf")).hexdigest()
-        query = self.query("SELECT id, username, password FROM User WHERE username='" + username + "' AND password='" + password + "'")
+        query = self.query("SELECT id, username, password FROM User WHERE username='" + username + "' AND password='" + md5 + "'")
         if len(query) == 0:
             return None
-        return {'id': query[0][0], 'username': username, 'password': password}
+        return {'id': query[0][0], 'username': username, 'password': md5}
 
     # def deleteProject(self, project_id):
     #     # Just hide, not really delete
